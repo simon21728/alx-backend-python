@@ -53,6 +53,7 @@ MIDDLEWARE = [
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
     
     'chats.middleware.RequestLoggingMiddleware',
+
 ]
 
 ROOT_URLCONF = 'django_middleware_0x03.urls'
