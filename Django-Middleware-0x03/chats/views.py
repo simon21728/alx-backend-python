@@ -10,6 +10,12 @@ from .permissions import IsParticipantOfConversation
 from .permissions import IsAuthenticatedParticipant
 from .permissions import IsParticipant
 from rest_framework.exceptions import PermissionDenied
+
+from django.http import HttpResponse
+
+def home(request):
+    return HttpResponse("Welcome to the homepage!")
+
 class ConversationViewSet(viewsets.ModelViewSet):
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
