@@ -9,6 +9,6 @@ router.register(r'messages', MessageViewSet, basename='message')
 
 # URL patterns
 urlpatterns = [
-    path('', include(router.urls)),  # Include all routes from the router
+    
     path('messages/<int:pk>/', MessageDetailView.as_view(), name='message-detail'),
 ]
