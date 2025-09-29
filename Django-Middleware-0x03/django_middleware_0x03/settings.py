@@ -132,15 +132,17 @@ LOGGING = {
     'disable_existing_loggers': False,
     'handlers': {
         'file': {
-            'level': 'DEBUG',
+            
+            'level': 'INFO',
             'class': 'logging.FileHandler',
-            'filename': 'requests.log',  # Log file will be created here
+            'filename': 'requests.log',
         },
     },
     'loggers': {
         'django': {
             'handlers': ['file'],
-            'level': 'DEBUG',
+         
+            'level': 'INFO',
             'propagate': True,
         },
     },
