@@ -3994,3 +3994,55 @@ File C:\Users\sewmehon\alx-backend-python\venv\Lib\site-packages\django\contrib\
 File C:\Users\sewmehon\alx-backend-python\venv\Lib\site-packages\django\contrib\sessions\serializers.py first seen with mtime 1759136967.805544
 File C:\Users\sewmehon\alx-backend-python\venv\Lib\site-packages\django\contrib\messages\storage\cookie.py first seen with mtime 1759136967.5471709
 File C:\Users\sewmehon\alx-backend-python\venv\Lib\site-packages\django\contrib\messages\storage\cookie.py first seen with mtime 1759136967.5471709
+Watching for file changes with StatReloader
+2025-09-29 09:38:33.170196 - User: Anonymous - Path: /api/auth/token/
+Method Not Allowed: /api/auth/token/
+Method Not Allowed: /api/auth/token/
+"GET /api/auth/token/ HTTP/1.1" 405 7634
+"GET /api/auth/token/ HTTP/1.1" 405 7634
+"GET /static/rest_framework/css/default.css HTTP/1.1" 200 1152
+"GET /static/rest_framework/css/default.css HTTP/1.1" 200 1152
+"GET /static/rest_framework/css/bootstrap-tweaks.css HTTP/1.1" 200 3426
+"GET /static/rest_framework/css/bootstrap-tweaks.css HTTP/1.1" 200 3426
+"GET /static/rest_framework/css/prettify.css HTTP/1.1" 200 817
+"GET /static/rest_framework/css/prettify.css HTTP/1.1" 200 817
+"GET /static/rest_framework/css/bootstrap.min.css HTTP/1.1" 200 121457
+"GET /static/rest_framework/css/bootstrap.min.css HTTP/1.1" 200 121457
+"GET /static/rest_framework/js/default.js HTTP/1.1" 200 1268
+"GET /static/rest_framework/js/default.js HTTP/1.1" 200 1268
+"GET /static/rest_framework/js/ajax-form.js HTTP/1.1" 200 3796
+"GET /static/rest_framework/js/ajax-form.js HTTP/1.1" 200 3796
+"GET /static/rest_framework/js/load-ajax-form.js HTTP/1.1" 200 59
+"GET /static/rest_framework/js/load-ajax-form.js HTTP/1.1" 200 59
+"GET /static/rest_framework/js/bootstrap.min.js HTTP/1.1" 200 39680
+"GET /static/rest_framework/js/bootstrap.min.js HTTP/1.1" 200 39680
+"GET /static/rest_framework/img/grid.png HTTP/1.1" 200 1458
+"GET /static/rest_framework/img/grid.png HTTP/1.1" 200 1458
+"GET /static/rest_framework/js/csrf.js HTTP/1.1" 200 1793
+"GET /static/rest_framework/js/csrf.js HTTP/1.1" 200 1793
+"GET /static/rest_framework/js/prettify-min.js HTTP/1.1" 200 13632
+"GET /static/rest_framework/js/prettify-min.js HTTP/1.1" 200 13632
+"GET /static/rest_framework/js/jquery-3.7.1.min.js HTTP/1.1" 200 87533
+"GET /static/rest_framework/js/jquery-3.7.1.min.js HTTP/1.1" 200 87533
+2025-09-29 09:40:58.871802 - User: Anonymous - Path: /api/auth/token/
+Unauthorized: /api/auth/token/
+Unauthorized: /api/auth/token/
+"POST /api/auth/token/ HTTP/1.1" 401 63
+"POST /api/auth/token/ HTTP/1.1" 401 63
+2025-09-29 09:42:18.552270 - User: Anonymous - Path: /api/auth/token/
+Method Not Allowed: /api/auth/token/
+Method Not Allowed: /api/auth/token/
+"GET /api/auth/token/ HTTP/1.1" 405 40
+"GET /api/auth/token/ HTTP/1.1" 405 40
+2025-09-29 09:42:32.269740 - User: Anonymous - Path: /api/auth/token/
+Unauthorized: /api/auth/token/
+Unauthorized: /api/auth/token/
+"POST /api/auth/token/ HTTP/1.1" 401 63
+"POST /api/auth/token/ HTTP/1.1" 401 63
+C:\Users\sewmehon\alx-backend-python\Django-Middleware-0x03\chats\middleware.py changed, reloading.
+C:\Users\sewmehon\alx-backend-python\Django-Middleware-0x03\chats\middleware.py changed, reloading.
+Watching for file changes with StatReloader
+C:\Users\sewmehon\alx-backend-python\Django-Middleware-0x03\django_middleware_0x03\settings.py changed, reloading.
+C:\Users\sewmehon\alx-backend-python\Django-Middleware-0x03\django_middleware_0x03\settings.py changed, reloading.
+Watching for file changes with StatReloader
+Watching for file changes with StatReloader
