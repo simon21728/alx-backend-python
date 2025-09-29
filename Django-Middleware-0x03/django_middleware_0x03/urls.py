@@ -12,5 +12,5 @@ urlpatterns = [
     path("api/auth/token/refresh/", TokenRefreshView.as_view(), name="token_refresh"),
     path('api/chats/', include('chats.urls')),
     
-    path('', views.home, name='home'),
+    path('test/', views.home, name='home'),
 ]
