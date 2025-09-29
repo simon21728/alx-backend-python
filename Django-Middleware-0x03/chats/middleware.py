@@ -5,6 +5,25 @@ import time
 from collections import defaultdict
 from django.http import HttpResponseForbidden
 
+from django.http import HttpResponseForbidden
+
+class RolePermissionMiddleware:
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request):
+        # Check if the user is authenticated
+        if not request.user.is_authenticated:
+            return HttpResponseForbidden("You must be logged in to access this resource.")
+
+        # Check if the user has the 'admin' or 'moderator' role
+        if not (request.user.is_staff or 'moderator' in [group.name.lower() for group in request.user.groups.all()]):
+            return HttpResponseForbidden("You do not have permission to access this resource.")
+
+        # If the user has the correct role, proceed with the request
+        response = self.get_response(request)
+        return response
+
 class OffensiveLanguageMiddleware:
     def __init__(self, get_response):
         self.get_response = get_response
