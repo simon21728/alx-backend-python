@@ -1,3 +1,0 @@
--rw-r--r-- 1 sewmehon 197121 56 Sep 29 07:56 requests.log
-
-[ -s requests.log ] && echo "Exists and not empty" || echo "Missing or empty"
