@@ -4,12 +4,46 @@ from django.shortcuts import render
 from django.shortcuts import render
 
 # Create your views here.
-from django.shortcuts import render
 from django.views.generic import ListView
 from .models import Message, Notification
 from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
+
+
+from django.contrib.auth.decorators import login_required
+
+@login_required
+def threaded_messages(request):
+    """
+    Display all messages for the logged-in user in a threaded format.
+    """
+    user = request.user
+
+    # Fetch top-level messages (no parent), sent or received by this user
+    top_messages = Message.objects.filter(
+        sender=user
+    ).select_related('sender', 'receiver').prefetch_related(
+        'replies__sender', 'replies__receiver'
+    )
+
+    # Recursive function to fetch replies
+    def get_replies(message):
+        replies = []
+        for reply in message.replies.all().select_related('sender', 'receiver'):
+            replies.append(reply)
+            replies.extend(get_replies(reply))  # Recursive
+        return replies
+
+    # Build threaded structure for template
+    threads = []
+    for msg in top_messages:
+        threads.append({
+            'message': msg,
+            'replies': get_replies(msg)
+        })
+
+    return render(request, 'messaging/threaded_messages.html', {'threads': threads})
 
 @login_required
 def delete_user(request):
