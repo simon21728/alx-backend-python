@@ -3,11 +3,9 @@ from django.dispatch import receiver
 from .models import Message, Notification
 
 @receiver(post_save, sender=Message)
-def create_notification_for_new_message(sender, instance, created, **kwargs):
-    if created:
-        # Create a new notification for the receiver
+def create_notification(sender, instance, created, **kwargs):
+    if created:  # Only create notification when a new Message is saved
         Notification.objects.create(
             user=instance.receiver,
-            message=instance,
-            content=f"You have a new message from {instance.sender.username}",
+            message=instance
         )
