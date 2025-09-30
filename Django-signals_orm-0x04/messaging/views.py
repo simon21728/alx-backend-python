@@ -16,18 +16,17 @@ from django.contrib.auth.decorators import login_required
 @login_required
 def threaded_messages(request):
     """
-    Display all messages for the logged-in user in a threaded format.
+    Display all messages sent by the logged-in user (sender=request.user)
+    in a threaded format, including replies.
     """
     user = request.user
 
-    # Fetch top-level messages (no parent), sent or received by this user
-    top_messages = Message.objects.filter(
-        sender=user
-    ).select_related('sender', 'receiver').prefetch_related(
-        'replies__sender', 'replies__receiver'
-    )
+    # Fetch top-level messages sent by the logged-in user
+    top_messages = Message.objects.filter(sender=user, parent_message__isnull=True) \
+        .select_related('sender', 'receiver') \
+        .prefetch_related('replies__sender', 'replies__receiver')
 
-    # Recursive function to fetch replies
+    # Recursive function to fetch all nested replies
     def get_replies(message):
         replies = []
         for reply in message.replies.all().select_related('sender', 'receiver'):
