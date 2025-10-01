@@ -68,6 +68,14 @@ TEMPLATES = [
     },
 ]
 
+# Add at the bottom of settings.py
+CACHES = {
+    'default': {
+        'BACKEND': 'django.core.cache.backends.locmem.LocMemCache',
+        'LOCATION': 'unique-snowflake',
+    }
+}
+
 WSGI_APPLICATION = 'Django_signals_orm_0x04.wsgi.application'
 
 
