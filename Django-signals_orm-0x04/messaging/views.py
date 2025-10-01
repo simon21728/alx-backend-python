@@ -10,6 +10,20 @@ from django.shortcuts import redirect
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.models import User
 from django.contrib.auth.decorators import login_required
+from django.views.decorators.cache import cache_page
+from rest_framework.decorators import api_view
+from rest_framework.response import Response
+
+@cache_page(60)
+@api_view(['GET'])
+def messages_list(request, conversation_id):
+    messages = Message.objects.filter(
+        conversation_id=conversation_id,
+        conversation__participants=request.user
+    )
+    serializer = MessageSerializer(messages, many=True)
+    return Response(serializer.data)
+
 
 def unread_messages_view(request):
     unread_messages = Message.unread.unread_for_user(request.user).only(
