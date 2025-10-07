@@ -14,7 +14,7 @@ from django.views.decorators.cache import cache_page
 from rest_framework.decorators import api_view
 from rest_framework.response import Response
 
-@cache_page(60)
+@cache_page(60)  
 @api_view(['GET'])
 def messages_list(request, conversation_id):
     messages = Message.objects.filter(
