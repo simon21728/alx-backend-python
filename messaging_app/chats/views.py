@@ -12,6 +12,13 @@ from .permissions import IsParticipantOfConversation
 from .pagination import MessagePagination
 from .filters import MessageFilter
 
+from rest_framework_simplejwt.views import TokenRefreshView
+from rest_framework_simplejwt.serializers import TokenRefreshSerializer
+
+class CustomTokenRefreshView(TokenRefreshView):
+    serializer_class = TokenRefreshSerializer
+
+
 class MessageDetailView(generics.RetrieveAPIView):
     queryset = Message.objects.all()
     serializer_class = MessageSerializer
