@@ -1,10 +1,5 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.10'
-            args '-v /var/run/docker.sock:/var/run/docker.sock'
-        }
-    }
+    agent any
 
     environment {
         PYTHON_VENV = 'venv'
@@ -19,7 +14,7 @@ pipeline {
 
         stage('Setup Python') {
             steps {
-                sh 'python -m venv $PYTHON_VENV'
+                sh 'python3 -m venv $PYTHON_VENV'
                 sh './$PYTHON_VENV/bin/pip install --upgrade pip'
                 sh './$PYTHON_VENV/bin/pip install -r messaging_app/requirements.txt'
             }
