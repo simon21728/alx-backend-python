@@ -1,0 +1,41 @@
+pipeline {
+    agent any
+
+    environment {
+        PYTHON_VENV = 'venv'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/simon21728/alx-backend-python.git'
+            }
+        }
+
+        stage('Setup Python') {
+            steps {
+                sh 'python3 -m venv $PYTHON_VENV'
+                sh './$PYTHON_VENV/bin/pip install --upgrade pip'
+                sh './$PYTHON_VENV/bin/pip install -r messaging_app/requirements.txt'
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh './$PYTHON_VENV/bin/pytest messaging_app/tests --junitxml=report.xml'
+            }
+        }
+
+        stage('Publish Report') {
+            steps {
+                junit 'report.xml'
+            }
+        }
+    }
+
+    post {
+        always {
+            archiveArtifacts artifacts: 'report.xml', allowEmptyArchive: true
+        }
+    }
+}
