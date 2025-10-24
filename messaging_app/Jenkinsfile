@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'python:3.11'  // or any 3.x version
+            args '-v /var/run/docker.sock:/var/run/docker.sock'
+        }
+    }
 
     environment {
         PYTHON_VENV = 'venv'
@@ -14,16 +19,14 @@ pipeline {
 
         stage('Setup Python') {
             steps {
-                sh 'apt-get update && apt-get install -y python3 python3-venv'
-              }
+                sh 'python3 -m venv $PYTHON_VENV'
+                sh './$PYTHON_VENV/bin/pip install -r requirements.txt'
+            }
         }
 
         stage('Run Tests') {
             steps {
-                sh 'python3 -m venv $PYTHON_VENV'
-                sh './$PYTHON_VENV/bin/pip install -r requirements.txt'
                 sh './$PYTHON_VENV/bin/pytest messaging_app/tests --junitxml=report.xml || true'
-                
             }
         }
 
