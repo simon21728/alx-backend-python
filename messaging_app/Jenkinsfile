@@ -20,7 +20,10 @@ pipeline {
 
         stage('Run Tests') {
             steps {
+                sh 'python3 -m venv $PYTHON_VENV'
+                sh './$PYTHON_VENV/bin/pip install -r requirements.txt'
                 sh './$PYTHON_VENV/bin/pytest messaging_app/tests --junitxml=report.xml || true'
+                
             }
         }
 
