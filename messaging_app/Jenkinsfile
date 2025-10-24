@@ -1,5 +1,8 @@
 pipeline {
-    agent any
+    apipeline {
+    agent {
+        docker { image 'python:3.10' }
+    }
 
     environment {
         PYTHON_VENV = 'venv'
@@ -14,14 +17,8 @@ pipeline {
 
         stage('Setup Python') {
             steps {
-                sh '''
-                    apt-get update
-                    apt-get install -y python3-venv pkg-config default-libmysqlclient-dev build-essential
-                    python3 -m venv $PYTHON_VENV
-                    ./$PYTHON_VENV/bin/pip install --upgrade pip
-                    ./$PYTHON_VENV/bin/pip install -r messaging_app/requirements.txt
-                '''
-            }
+                sh 'sudo apt-get update && sudo apt-get install -y python3 python3-venv'
+              }
         }
 
         stage('Run Tests') {
