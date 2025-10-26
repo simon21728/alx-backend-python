@@ -14,7 +14,50 @@ pipeline {
 
         stage('Setup Python') {
             steps {
-                sh 'python3 -m venv $PYTHON_VENV'
+                sh 'python3 -m vpipeline {
+    agent {
+        docker {
+            image 'python:3.10'
+            args '-u root:root' // if you need permissions to install packages
+        }
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git(
+                    url: 'https://github.com/<your-username>/alx-backend-python.git',
+                    branch: 'main',
+                    credentialsId: 'github-creds'
+                )
+            }
+        }
+
+        stage('Install dependencies') {
+            steps {
+                sh '''
+                pip install --upgrade pip
+                pip install -r messaging_app/requirements.txt
+                '''
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh '''
+                pytest messaging_app/tests --junitxml=report.xml
+                '''
+            }
+        }
+
+        stage('Publish Report') {
+            steps {
+                junit 'report.xml'
+            }
+        }
+    }
+}
+env $PYTHON_VENV'
                 sh './$PYTHON_VENV/bin/pip install --upgrade pip'
                 sh './$PYTHON_VENV/bin/pip install -r requirements.txt'
             }
