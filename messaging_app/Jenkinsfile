@@ -16,7 +16,9 @@ pipeline {
             steps {
                 sh 'python3 -m venv $PYTHON_VENV'
                 sh './$PYTHON_VENV/bin/pip install --upgrade pip'
-                sh './$PYTHON_VENV/bin/pip install -r requirements.txt'
+                
+                sh './venv/bin/pip install -r messaging_app/requirements.txt'
+
             }
         }
 
