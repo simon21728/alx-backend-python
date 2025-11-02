@@ -3,7 +3,7 @@ pipeline {
 
     environment {
         VENV = "${WORKSPACE}/venv"
-        DOCKERHUB_REPO = "genular/simon"
+        DOCKERHUB_REPO = "sewmehon/alx-backend-python"
     }
 
     stages {
