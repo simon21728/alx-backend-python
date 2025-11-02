@@ -22,7 +22,7 @@ pipeline {
             steps {
                 sh '''
                 python3 -m venv venv
-                source venv/bin/activate
+                 . venv/bin/activate
                 pip install --upgrade pip
                 pip install -r messaging_app/requirements.txt
                 '''
@@ -32,7 +32,7 @@ pipeline {
         stage('Run Tests') {
             steps {
                 sh '''
-                source venv/bin/activate
+                . venv/bin/activate
                 pytest messaging_app/tests --junitxml=report.xml
                 '''
             }
