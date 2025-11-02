@@ -2,15 +2,16 @@ pipeline {
     agent any
 
     environment {
-        // Path to virtual environment
         VENV = "${WORKSPACE}/venv"
+        DOCKERHUB_REPO = "genular/simon"
     }
 
     stages {
+
         stage('Checkout') {
             steps {
                 git(
-                    url: 'https://github.com/<your-username>/alx-backend-python.git',
+                    url: 'https://github.com/simon21728/alx-backend-python.git',
                     branch: 'main',
                     credentialsId: 'github-creds'
                 )
@@ -19,26 +20,21 @@ pipeline {
 
         stage('Setup Python Environment') {
             steps {
-                script {
-                    // Use ShiningPanda to create a Python environment
-                    sh '''
-                    python3 -m venv venv
-                    source venv/bin/activate
-                    pip install --upgrade pip
-                    pip install -r messaging_app/requirements.txt
-                    '''
-                }
+                sh '''
+                python3 -m venv venv
+                source venv/bin/activate
+                pip install --upgrade pip
+                pip install -r messaging_app/requirements.txt
+                '''
             }
         }
 
         stage('Run Tests') {
             steps {
-                script {
-                    sh '''
-                    source venv/bin/activate
-                    pytest messaging_app/tests --junitxml=report.xml
-                    '''
-                }
+                sh '''
+                source venv/bin/activate
+                pytest messaging_app/tests --junitxml=report.xml
+                '''
             }
             post {
                 always {
@@ -46,15 +42,36 @@ pipeline {
                 }
             }
         }
+
+        stage('Build Docker Image') {
+            steps {
+                script {
+                    sh '''
+                    docker build -t ${DOCKERHUB_REPO}:latest -f messaging_app/Dockerfile .
+                    '''
+                }
+            }
+        }
+
+        stage('Push Docker Image') {
+            steps {
+                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                    sh '''
+                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
+                    docker push ${DOCKERHUB_REPO}:latest
+                    docker logout
+                    '''
+                }
+            }
+        }
     }
 
     post {
         success {
-            echo '✅ Tests passed successfully!'
+            echo '✅ Pipeline completed successfully. Docker image built and pushed!'
         }
         failure {
-            echo '❌ Tests failed. Please check the reports.'
+            echo '❌ Pipeline failed. Please check the logs.'
         }
     }
 }
-O=
