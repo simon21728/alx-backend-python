@@ -1,8 +1,10 @@
-FROM jenkins/jenkins:lts
+FROM python:3.10-slim
 
-USER root
-RUN apt-get update && \
-    apt-get install -y python3 python3-venv python3-pip && \
-    rm -rf /var/lib/apt/lists/*
+RUN apt-get update && apt-get install -y \
+    pkg-config \
+    default-libmysqlclient-dev \
+    build-essential
 
-USER jenkins
+WORKDIR /app
+COPY . .
+RUN pip install -r messaging_app/requirements.txt
