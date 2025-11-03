@@ -1,13 +1,10 @@
 pipeline {
-    agent {
-        docker {
-            image 'python:3.10'
-            args '-u root'
-        }
-    }
+    agent any   // Run on the Jenkins node (container)
+
     environment {
         PYTHON_VENV = 'venv'
     }
+
     stages {
         stage('Checkout') {
             steps {
