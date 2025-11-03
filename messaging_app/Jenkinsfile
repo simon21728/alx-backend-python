@@ -5,8 +5,8 @@ pipeline {
         PYTHON_VENV = 'venv'
     }
 
-       stages {
-         stage('Checkout') {
+    stages {
+        stage('Checkout') {
             steps {
                 git branch: 'main', url: 'https://github.com/simon21728/alx-backend-python.git'
             }
@@ -14,23 +14,31 @@ pipeline {
 
         stage('Setup Python') {
             steps {
-                sh 'python3 -m venv $PYTHON_VENV'
-                sh './$PYTHON_VENV/Scripts/pip install --upgrade pip'
-                
-                sh './venv/Scripts/pip install -r messaging_app/requirements.txt'
-
+                sh '''
+                python3 -m venv ${PYTHON_VENV}
+                source ${PYTHON_VENV}/bin/activate
+                pip install --upgrade pip
+                pip install -r messaging_app/requirements.txt
+                '''
             }
         }
 
-       stage('Install Dependencies') {
+        stage('Install Dependencies') {
             steps {
-                 sh '''
-                 apt-get update && apt-get install -y pkg-config default-libmysqlclient-dev build-essential
-                 ./venv/Scripts/pip install -r messaging_app/requirements.txt
-                  '''
+                sh '''
+                apt-get update && apt-get install -y pkg-config default-libmysqlclient-dev build-essential
+                source ${PYTHON_VENV}/bin/activate
+                pip install -r messaging_app/requirements.txt
+                '''
+            }
+        }
+
         stage('Run Tests') {
             steps {
-                sh './$PYTHON_VENV/Scripts/pytest messaging_app/tests --junitxml=report.xml || true'
+                sh '''
+                source ${PYTHON_VENV}/bin/activate
+                pytest messaging_app/tests --junitxml=report.xml || true
+                '''
             }
         }
 
