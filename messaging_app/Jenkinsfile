@@ -1,5 +1,10 @@
 pipeline {
-    agent any
+    agent {
+        docker {
+            image 'python:3.10'   // runs stages in a Python container
+            args '-u root'        // allows apt-get and pip installs
+        }
+    }
 
     environment {
         PYTHON_VENV = 'venv'
