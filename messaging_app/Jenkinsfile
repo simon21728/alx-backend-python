@@ -1,10 +1,13 @@
 pipeline {
-    agent any   // ensures workspace exists
-
+    agent {
+        docker {
+            image 'python:3.10'
+            args '-u root'
+        }
+    }
     environment {
         PYTHON_VENV = 'venv'
     }
-
     stages {
         stage('Checkout') {
             steps {
@@ -12,26 +15,22 @@ pipeline {
             }
         }
 
-        stage('Setup Python in Docker') {
+        stage('Setup Python') {
             steps {
                 sh '''
-                docker run --rm -v $PWD:/app -w /app python:3.10 bash -c "
-                    python3 -m venv ${PYTHON_VENV} &&
-                    source ${PYTHON_VENV}/bin/activate &&
-                    pip install --upgrade pip &&
-                    pip install -r messaging_app/requirements.txt
-                "
+                python3 -m venv ${PYTHON_VENV}
+                source ${PYTHON_VENV}/bin/activate
+                pip install --upgrade pip
+                pip install -r messaging_app/requirements.txt
                 '''
             }
         }
 
-        stage('Run Tests in Docker') {
+        stage('Run Tests') {
             steps {
                 sh '''
-                docker run --rm -v $PWD:/app -w /app python:3.10 bash -c "
-                    source ${PYTHON_VENV}/bin/activate &&
-                    pytest messaging_app/tests --junitxml=report.xml || true
-                "
+                source ${PYTHON_VENV}/bin/activate
+                pytest messaging_app/tests --junitxml=report.xml || true
                 '''
             }
         }
