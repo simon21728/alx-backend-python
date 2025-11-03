@@ -1,5 +1,5 @@
 pipeline {
-    agent any   // ensures all steps have a proper node/workspace
+    agent any   // ensures workspace exists
 
     environment {
         PYTHON_VENV = 'venv'
@@ -25,7 +25,7 @@ pipeline {
             }
         }
 
-        stage('Run Tests') {
+        stage('Run Tests in Docker') {
             steps {
                 sh '''
                 docker run --rm -v $PWD:/app -w /app python:3.10 bash -c "
