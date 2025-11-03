@@ -7,7 +7,6 @@ pipeline {
     }
 
     stages {
-
         stage('Checkout') {
             steps {
                 git(
@@ -20,31 +19,11 @@ pipeline {
 
         stage('Setup Python Environment') {
             steps {
-<<<<<<< HEAD
-                sh 'python3 -m venv $PYTHON_VENV'
-                sh './$PYTHON_VENV/Scripts/pip install --upgrade pip'
-                
-                sh './venv/Scripts/pip install -r messaging_app/requirements.txt'
-
-            }
-        }
-
-       stage('Install Dependencies') {
-            steps {
-                 sh '''
-                 apt-get update && apt-get install -y pkg-config default-libmysqlclient-dev build-essential
-                 ./venv/Scripts/pip install -r messaging_app/requirements.txt
-                  '''
-        stage('Run Tests') {
-            steps {
-                sh './$PYTHON_VENV/Scripts/pytest messaging_app/tests --junitxml=report.xml || true'
-=======
                 sh '''
                 python3 -m venv venv
-                 source venv/bin/activate
+                source venv/bin/activate
                 pip install --upgrade pip
                 pip install -r messaging_app/requirements.txt
-                pytest messaging_app/tests --junitxml=report.xml
                 '''
             }
         }
@@ -60,23 +39,24 @@ pipeline {
                 always {
                     junit 'report.xml'
                 }
->>>>>>> ed57ea69be6387ecb66ec603605c7d4ca4671b4c
             }
         }
 
         stage('Build Docker Image') {
             steps {
-                script {
-                    sh '''
-                    docker build -t ${DOCKERHUB_REPO}:latest -f messaging_app/Dockerfile .
-                    '''
-                }
+                sh '''
+                docker build -t ${DOCKERHUB_REPO}:latest -f messaging_app/Dockerfile .
+                '''
             }
         }
 
         stage('Push Docker Image') {
             steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
+                withCredentials([usernamePassword(
+                    credentialsId: 'dockerhub-creds',
+                    usernameVariable: 'DOCKER_USER',
+                    passwordVariable: 'DOCKER_PASS'
+                )]) {
                     sh '''
                     echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
                     docker push ${DOCKERHUB_REPO}:latest
