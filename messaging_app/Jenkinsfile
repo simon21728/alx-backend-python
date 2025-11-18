@@ -1,50 +1,24 @@
 pipeline {
-    agent any
+    agent any   // Run on the Jenkins node (container)
 
     environment {
-        VENV = "${WORKSPACE}/venv"
-        DOCKERHUB_REPO = "sewmehon/alx-backend-python"
+        PYTHON_VENV = 'venv'
     }
 
     stages {
-
         stage('Checkout') {
             steps {
-                git(
-                    url: 'https://github.com/simon21728/alx-backend-python.git',
-                    branch: 'main',
-                    credentialsId: 'github-creds'
-                )
+                git branch: 'main', url: 'https://github.com/simon21728/alx-backend-python.git'
             }
         }
 
-        stage('Setup Python Environment') {
+        stage('Setup Python') {
             steps {
-<<<<<<< HEAD
-                sh 'python3 -m venv $PYTHON_VENV'
-                sh './$PYTHON_VENV/Scripts/pip install --upgrade pip'
-                
-                sh './venv/Scripts/pip install -r messaging_app/requirements.txt'
-
-            }
-        }
-
-       stage('Install Dependencies') {
-            steps {
-                 sh '''
-                 apt-get update && apt-get install -y pkg-config default-libmysqlclient-dev build-essential
-                 ./venv/Scripts/pip install -r messaging_app/requirements.txt
-                  '''
-        stage('Run Tests') {
-            steps {
-                sh './$PYTHON_VENV/Scripts/pytest messaging_app/tests --junitxml=report.xml || true'
-=======
                 sh '''
-                python3 -m venv venv
-                 source venv/bin/activate
+                python3 -m venv ${PYTHON_VENV}
+                source ${PYTHON_VENV}/bin/activate
                 pip install --upgrade pip
                 pip install -r messaging_app/requirements.txt
-                pytest messaging_app/tests --junitxml=report.xml
                 '''
             }
         }
@@ -52,47 +26,22 @@ pipeline {
         stage('Run Tests') {
             steps {
                 sh '''
-                source venv/bin/activate
-                pytest messaging_app/tests --junitxml=report.xml
+                source ${PYTHON_VENV}/bin/activate
+                pytest messaging_app/tests --junitxml=report.xml || true
                 '''
             }
-            post {
-                always {
-                    junit 'report.xml'
-                }
->>>>>>> ed57ea69be6387ecb66ec603605c7d4ca4671b4c
-            }
         }
 
-        stage('Build Docker Image') {
+        stage('Publish Report') {
             steps {
-                script {
-                    sh '''
-                    docker build -t ${DOCKERHUB_REPO}:latest -f messaging_app/Dockerfile .
-                    '''
-                }
-            }
-        }
-
-        stage('Push Docker Image') {
-            steps {
-                withCredentials([usernamePassword(credentialsId: 'dockerhub-creds', usernameVariable: 'DOCKER_USER', passwordVariable: 'DOCKER_PASS')]) {
-                    sh '''
-                    echo "$DOCKER_PASS" | docker login -u "$DOCKER_USER" --password-stdin
-                    docker push ${DOCKERHUB_REPO}:latest
-                    docker logout
-                    '''
-                }
+                junit 'report.xml'
             }
         }
     }
 
     post {
-        success {
-            echo '✅ Pipeline completed successfully. Docker image built and pushed!'
-        }
-        failure {
-            echo '❌ Pipeline failed. Please check the logs.'
+        always {
+            archiveArtifacts artifacts: 'report.xml', allowEmptyArchive: true
         }
     }
 }
