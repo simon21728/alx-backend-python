@@ -1,0 +1,32 @@
+#!/bin/bash
+# kubctl-0x01
+# Objective: Scale Django app, verify pods, load test, and monitor resource usage
+
+DEPLOYMENT_NAME="django-messaging-app"
+SERVICE_NAME="messaging-app-service"
+REPLICAS=3
+PORT=8000
+
+echo "🔹 Scaling deployment $DEPLOYMENT_NAME to $REPLICAS replicas..."
+kubectl scale deployment $DEPLOYMENT_NAME --replicas=$REPLICAS
+
+echo "⏳ Waiting for pods to scale up..."
+sleep 10
+
+echo "🔹 Verifying running pods:"
+kubectl get pods -o wide
+
+echo "🔹 Forwarding service $SERVICE_NAME on port $PORT ..."
+kubectl port-forward service/$SERVICE_NAME $PORT:$PORT &
+PF_PID=$!
+sleep 5
+
+echo "🔹 Running load test with wrk..."
+wrk -t2 -c10 -d10s http://localhost:$PORT
+
+echo "🔹 Monitoring resource usage of pods:"
+kubectl top pods
+
+# Stop port-forward
+kill $PF_PID
+echo "✅ Done. Port-forward stopped."

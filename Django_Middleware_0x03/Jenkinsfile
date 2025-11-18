@@ -1,0 +1,47 @@
+pipeline {
+    agent any   // Run on the Jenkins node (container)
+
+    environment {
+        PYTHON_VENV = 'venv'
+    }
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/simon21728/alx-backend-python.git'
+            }
+        }
+
+        stage('Setup Python') {
+            steps {
+                sh '''
+                python3 -m venv ${PYTHON_VENV}
+                source ${PYTHON_VENV}/bin/activate
+                pip install --upgrade pip
+                pip install -r messaging_app/requirements.txt
+                '''
+            }
+        }
+
+        stage('Run Tests') {
+            steps {
+                sh '''
+                source ${PYTHON_VENV}/bin/activate
+                pytest messaging_app/tests --junitxml=report.xml || true
+                '''
+            }
+        }
+
+        stage('Publish Report') {
+            steps {
+                junit 'report.xml'
+            }
+        }
+    }
+
+    post {
+        always {
+            archiveArtifacts artifacts: 'report.xml', allowEmptyArchive: true
+        }
+    }
+}
