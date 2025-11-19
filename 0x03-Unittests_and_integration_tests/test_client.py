@@ -1,18 +1,16 @@
 #!/usr/bin/env python3
 """
-Unit tests for GithubOrgClient
+Unit tests for GithubOrgClient.
 """
 
 import unittest
 from unittest.mock import patch, PropertyMock
 from parameterized import parameterized
 from client import GithubOrgClient
-from utils import get_json
-
 
 
 class TestGithubOrgClient(unittest.TestCase):
-    """Tests for GithubOrgClient"""
+    """Tests for GithubOrgClient."""
 
     @parameterized.expand([
         ("google",),
@@ -47,7 +45,7 @@ class TestGithubOrgClient(unittest.TestCase):
 
     @patch("client.get_json")
     def test_public_repos(self, mock_get_json):
-        """Test public_repos returns expected list of names."""
+        """Test public_repos returns expected list of repo names."""
         mock_get_json.return_value = [
             {"name": "repo1"},
             {"name": "repo2"}
@@ -64,7 +62,3 @@ class TestGithubOrgClient(unittest.TestCase):
 
             self.assertEqual(result, ["repo1", "repo2"])
             mock_get_json.assert_called_once_with("http://example.com")
-
-
-if __name__ == "__main__":
-    unittest.main()
