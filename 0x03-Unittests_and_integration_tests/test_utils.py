@@ -76,6 +76,7 @@ class TestMemoize(unittest.TestCase):
 
         obj = TestClass()
 
+        
         with patch.object(TestClass, "a_method", return_value=42) as mock_method:
             # Call property twice; should call a_method only once
             result1 = obj.a_property
