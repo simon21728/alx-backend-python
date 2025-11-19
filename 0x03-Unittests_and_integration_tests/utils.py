@@ -1,41 +1,44 @@
 #!/usr/bin/env python3
 """
-Utility functions for testing lessons.
+Utils module
 """
 
+from typing import Any, Mapping, Sequence
 import requests
-from functools import wraps
-from typing import Mapping, Any, Sequence
 
 
 def access_nested_map(nested_map: Mapping, path: Sequence) -> Any:
     """
-    Access a nested map using a sequence of keys.
+    Access a nested map with a sequence of keys.
     """
-    current = nested_map
+    value = nested_map
     for key in path:
-        current = current[key]
-    return current
+        value = value[key]
+    return value
 
 
 def get_json(url: str) -> Any:
     """
-    Make a GET request to a URL and return the JSON response.
+    Get JSON from URL using requests
     """
     response = requests.get(url)
     return response.json()
 
 
-def memoize(method):
+class memoize:
     """
-    Decorator to cache the result of a method.
+    Decorator class to memoize methods
     """
+    def __init__(self, func):
+        self.func = func
 
-    @wraps(method)
-    def wrapper(self):
-        attr = f"_{method.__name__}"
-        if not hasattr(self, attr):
-            setattr(self, attr, method(self))
-        return getattr(self, attr)
-
-    return wrapper
+    def __get__(self, obj, objtype):
+        """
+        Turns the method into a property-like cached attribute.
+        """
+        if obj is None:
+            return self
+        attr_name = self.func.__name__
+        if not hasattr(obj, attr_name):
+            setattr(obj, attr_name, self.func(obj))
+        return getattr(obj, attr_name)
