@@ -1,25 +1,38 @@
 #!/usr/bin/env python3
 """
-Module for GithubOrgClient.
+Utility functions for various tasks:
+- access_nested_map
+- get_json
+- memoize decorator
 """
 
+from functools import wraps
 import requests
 
 
+def access_nested_map(nested_map, path):
+    """Access a nested map using a sequence of keys."""
+    current = nested_map
+    for key in path:
+        current = current[key]
+    return current
+
+
 def get_json(url):
-    """Fetch JSON payload from a URL."""
+    """Get JSON content from a URL."""
     response = requests.get(url)
-    response.raise_for_status()
     return response.json()
 
 
-class GithubOrgClient:
-    """A client for interacting with the GitHub organization API."""
+def memoize(fn):
+    """Memoize a method's return value."""
+    attr_name = "_memoized_" + fn.__name__
 
-    def __init__(self, org_name):
-        self.org_name = org_name
+    @property
+    @wraps(fn)
+    def wrapper(self):
+        if not hasattr(self, attr_name):
+            setattr(self, attr_name, fn(self))
+        return getattr(self, attr_name)
 
-    def org(self):
-        """Return the JSON payload of the organization."""
-        url = f"https://api.github.com/orgs/{self.org_name}"
-        return get_json(url)
+    return wrapper
