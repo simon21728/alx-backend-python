@@ -79,14 +79,15 @@ WSGI_APPLICATION = 'messaging_app.wsgi.application'
 
 DATABASES = {
     'default': {
-        'ENGINE': 'django.db.backends.mysql',
-        'NAME': os.getenv('MYSQL_DATABASE'),
-        'USER': os.getenv('MYSQL_USER'),
-        'PASSWORD': os.getenv('MYSQL_PASSWORD'),
-        'HOST': os.getenv('MYSQL_HOST', 'db'),
-        'PORT': os.getenv('MYSQL_PORT', 3306),
+        'ENGINE': 'mysql.connector.django',
+        'NAME': os.getenv('MYSQL_DATABASE', 'messaging_db'),
+        'USER': os.getenv('MYSQL_USER', 'root'),
+        'PASSWORD': os.getenv('MYSQL_PASSWORD', 'Sew76@bayu21'),
+        'HOST': os.getenv('MYSQL_HOST', '127.0.0.1'),
+        'PORT': int(os.getenv('MYSQL_PORT', 3306)),
     }
 }
+
 
 
 
@@ -149,3 +150,5 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+AUTH_USER_MODEL = "chats.User"
