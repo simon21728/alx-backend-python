@@ -16,6 +16,9 @@ class User(AbstractUser):
     first_name = models.CharField(max_length=150, null=False)
     last_name = models.CharField(max_length=150, null=False)
 
+
+    password = models.CharField(max_length=128, null=False)
+
     # Remove username field
     username = None
     email = models.EmailField(unique=True, null=False)
