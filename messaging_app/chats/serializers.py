@@ -6,6 +6,8 @@ from .models import User, Conversation, Message
 #        USER SERIALIZER
 # =========================
 class UserSerializer(serializers.ModelSerializer):
+    password = serializers.CharField(write_only=True)
+
     class Meta:
         model = User
         fields = [
@@ -18,11 +20,7 @@ class UserSerializer(serializers.ModelSerializer):
             "role",
             "created_at",
         ]
-        extra_kwargs = {
-            "password": {"write_only": True},
-        }
 
-    # Ensure password is hashed on create/update
     def create(self, validated_data):
         password = validated_data.pop("password", None)
         user = super().create(validated_data)
@@ -45,6 +43,8 @@ class UserSerializer(serializers.ModelSerializer):
 # =========================
 class MessageSerializer(serializers.ModelSerializer):
     sender = UserSerializer(read_only=True)
+    message_body = serializers.CharField()
+    sent_at_display = serializers.SerializerMethodField()
 
     class Meta:
         model = Message
@@ -54,7 +54,11 @@ class MessageSerializer(serializers.ModelSerializer):
             "sender",
             "message_body",
             "sent_at",
+            "sent_at_display",
         ]
+
+    def get_sent_at_display(self, obj):
+        return obj.sent_at.strftime("%Y-%m-%d %H:%M:%S")
 
 
 # =========================
@@ -62,7 +66,7 @@ class MessageSerializer(serializers.ModelSerializer):
 # =========================
 class ConversationSerializer(serializers.ModelSerializer):
     participants = UserSerializer(many=True, read_only=True)
-    messages = MessageSerializer(many=True, read_only=True)
+    messages = serializers.SerializerMethodField()
 
     class Meta:
         model = Conversation
@@ -72,3 +76,12 @@ class ConversationSerializer(serializers.ModelSerializer):
             "messages",
             "created_at",
         ]
+
+    def get_messages(self, obj):
+        messages = obj.messages.all().order_by("sent_at")
+        return MessageSerializer(messages, many=True).data
+
+    def validate(self, attrs):
+        if not obj.participants.exists():
+            raise serializers.ValidationError("A conversation must have at least one participant.")
+        return attrs
