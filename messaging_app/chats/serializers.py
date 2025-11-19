@@ -81,7 +81,7 @@ class ConversationSerializer(serializers.ModelSerializer):
         messages = obj.messages.all().order_by("sent_at")
         return MessageSerializer(messages, many=True).data
 
-    def validate(self, attrs):
+    def validate(self, obj):
         if not obj.participants.exists():
             raise serializers.ValidationError("A conversation must have at least one participant.")
-        return attrs
+        return obj
