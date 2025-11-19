@@ -1,16 +1,16 @@
 #!/usr/bin/env python3
 """
-Unit tests for GithubOrgClient.
+Unit and Integration tests for GithubOrgClient.
 """
 
 import unittest
 from unittest.mock import patch, PropertyMock
-from parameterized import parameterized,parameterized_class
+from parameterized import parameterized, parameterized_class
 from client import GithubOrgClient
 from fixtures import org_payload, repos_payload, expected_repos, apache2_repos
-from utils import get_json
 
 
+# ---------------------- Integration Tests ---------------------- #
 @parameterized_class([
     {
         "org_payload": org_payload,
@@ -20,7 +20,7 @@ from utils import get_json
     }
 ])
 class TestIntegrationGithubOrgClient(unittest.TestCase):
-    """Integration tests for GithubOrgClient."""
+    """Integration tests for GithubOrgClient.public_repos."""
 
     @classmethod
     def setUpClass(cls):
@@ -52,9 +52,9 @@ class TestIntegrationGithubOrgClient(unittest.TestCase):
         self.assertEqual(client.public_repos(license="apache-2"), self.apache2_repos)
 
 
-
+# ---------------------- Unit Tests ---------------------- #
 class TestGithubOrgClient(unittest.TestCase):
-    """Tests for GithubOrgClient."""
+    """Unit tests for GithubOrgClient methods."""
 
     @parameterized.expand([
         ({"license": {"key": "my_license"}}, "my_license", True),
@@ -63,13 +63,7 @@ class TestGithubOrgClient(unittest.TestCase):
     def test_has_license(self, repo, license_key, expected):
         """Test has_license returns expected boolean based on license key."""
         client = GithubOrgClient("org_name")
-        result = client.has_license(repo, license_key)
-        self.assertEqual(result, expected)
-
-
-
-class TestGithubOrgClient(unittest.TestCase):
-    """Tests for GithubOrgClient."""
+        self.assertEqual(client.has_license(repo, license_key), expected)
 
     @parameterized.expand([
         ("google",),
