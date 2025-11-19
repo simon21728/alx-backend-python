@@ -4,8 +4,6 @@ Unit tests for the utils module.
 
 This file contains parameterized and patched tests for the following functions:
 - access_nested_map
-- get_json
-- memoize decorator
 """
 
 import unittest
