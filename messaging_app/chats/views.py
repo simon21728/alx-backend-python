@@ -1,63 +1,79 @@
-from django.shortcuts import render
-
-# Create your views here.
-from rest_framework import generics
-from .models import Message,Conversation
-from .serializers import MessageSerializer, ConversationSerializer
-from .permissions import IsOwner
-from rest_framework import viewsets
-from django_filters.rest_framework import DjangoFilterBackend
-from .permissions import IsParticipantOfConversation
-from .permissions import IsParticipantOfConversation
-from .pagination import MessagePagination
-from .filters import MessageFilter
-
-from rest_framework_simplejwt.views import TokenRefreshView
-from rest_framework_simplejwt.serializers import TokenRefreshSerializer
-
-class CustomTokenRefreshView(TokenRefreshView):
-    serializer_class = TokenRefreshSerializer
+from rest_framework import viewsets, status
+from rest_framework.response import Response
+from rest_framework.decorators import action
+from .models import User, Conversation, Message
+from .serializers import UserSerializer, ConversationSerializer, MessageSerializer
 
 
-class MessageDetailView(generics.RetrieveAPIView):
-    queryset = Message.objects.all()
-    serializer_class = MessageSerializer
-    permission_classes = [IsOwner]  # Only sender/receiver can access
-
-class UserMessagesListView(generics.ListAPIView):
-    serializer_class = MessageSerializer
-    permission_classes = [IsOwner]
-
-    def get_queryset(self):
-        # Return only messages where the request.user is sender or receiver
-        return Message.objects.filter(
-            sender=self.request.user
-        ) | Message.objects.filter(
-            receiver=self.request.user
-        )
-
-
-class MessageViewSet(viewsets.ModelViewSet):
-    queryset = Message.objects.all()
-    serializer_class = MessageSerializer
-    permission_classes = [IsParticipantOfConversation]
-    pagination_class = MessagePagination  # Pagination
-    filter_backends = [DjangoFilterBackend]  #  Enable filtering
-    filterset_class = MessageFilter         #  Filter class
-
-    def get_queryset(self):
-        # Only messages the user participates in
-        return Message.objects.filter(
-            sender=self.request.user
-        ) | Message.objects.filter(
-            receiver=self.request.user
-        )
-
+# =========================
+#      CONVERSATION VIEWSET
+# =========================
 class ConversationViewSet(viewsets.ModelViewSet):
     queryset = Conversation.objects.all()
     serializer_class = ConversationSerializer
-    permission_classes = [IsParticipantOfConversation]
 
-    def get_queryset(self):
-        # Return only conversations where the user is a participant
-        return Conversation.objects.filter(participants=self.request.user)
+    def create(self, request, *args, **kwargs):
+        """
+        Create a new conversation with participants.
+        Expected input:
+        {
+            "participants": ["uuid1", "uuid2", ...]
+        }
+        """
+        participant_ids = request.data.get("participants", [])
+        if not participant_ids:
+            return Response({"detail": "Participants are required."}, status=status.HTTP_400_BAD_REQUEST)
+
+        conversation = Conversation.objects.create()
+        participants = User.objects.filter(user_id__in=participant_ids)
+        if not participants.exists():
+            return Response({"detail": "No valid participants found."}, status=status.HTTP_400_BAD_REQUEST)
+
+        conversation.participants.set(participants)
+        conversation.save()
+        serializer = self.get_serializer(conversation)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+    @action(detail=True, methods=["get"])
+    def messages(self, request, pk=None):
+        """
+        List messages in a specific conversation.
+        """
+        conversation = self.get_object()
+        serializer = MessageSerializer(conversation.messages.all().order_by("sent_at"), many=True)
+        return Response(serializer.data)
+
+
+# =========================
+#        MESSAGE VIEWSET
+# =========================
+class MessageViewSet(viewsets.ModelViewSet):
+    queryset = Message.objects.all()
+    serializer_class = MessageSerializer
+
+    def create(self, request, *args, **kwargs):
+        """
+        Send a message to a conversation.
+        Expected input:
+        {
+            "conversation": "conversation_uuid",
+            "sender": "user_uuid",
+            "message_body": "Hello!"
+        }
+        """
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+
+        conversation_id = serializer.validated_data.get("conversation").id
+        sender = serializer.validated_data.get("sender")
+
+        # Optional: ensure sender is part of conversation
+        if not sender.conversations.filter(id=conversation_id).exists():
+            return Response(
+                {"detail": "Sender is not a participant of this conversation."},
+                status=status.HTTP_400_BAD_REQUEST
+            )
+
+        self.perform_create(serializer)
+        headers = self.get_success_headers(serializer.data)
+        return Response(serializer.data, status=status.HTTP_201_CREATED, headers=headers)
