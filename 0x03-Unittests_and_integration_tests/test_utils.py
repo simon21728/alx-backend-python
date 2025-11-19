@@ -8,8 +8,10 @@ from unittest.mock import patch
 from utils import memoize
 from utils import access_nested_map, get_json, memoize
 #!/usr/bin/env python3
+
+#Unit tests for utils module.
 """
-Unit tests for utils module.
+
 
 This file contains parameterized and patched tests for the following functions:
 - access_nested_map
