@@ -1,31 +1,17 @@
 #!/usr/bin/env python3
+"""
+Unit tests for the utils module.
+
+This file contains parameterized and patched tests for the following functions:
+- access_nested_map
+- get_json
+- memoize decorator
+"""
+
 import unittest
 from parameterized import parameterized
-from utils import access_nested_map
 from unittest.mock import patch, Mock
-from utils import get_json
-from unittest.mock import patch
-from utils import memoize
 from utils import access_nested_map, get_json, memoize
-#!/usr/bin/env python3
-
-#Unit tests for utils module.
-"""
-
-
-This file contains parameterized and patched tests for the following functions:
-- access_nested_map
-- get_json
-- memoize decorator
-"""#!/usr/bin/env python3
-"""
-Unit tests for utils module.
-
-This file contains parameterized and patched tests for the following functions:
-- access_nested_map
-- get_json
-- memoize decorator
-"""
 
 
 class TestAccessNestedMap(unittest.TestCase):
@@ -98,23 +84,3 @@ class TestMemoize(unittest.TestCase):
             self.assertEqual(result1, 42)
             self.assertEqual(result2, 42)
             mock_method.assert_called_once()
-
-class TestGetJson(unittest.TestCase):
-    """Test utils.get_json function."""
-
-    @parameterized.expand([
-        ("http://example.com", {"payload": True}),
-        ("http://holberton.io", {"payload": False})
-    ])
-    @patch("utils.requests.get")
-    def test_get_json(self, test_url, test_payload, mock_get):
-        """Test get_json returns the expected payload from requests.get."""
-        mock_resp = Mock()
-        mock_resp.json.return_value = test_payload
-        mock_get.return_value = mock_resp
-
-        result = get_json(test_url)
-
-        mock_get.assert_called_once_with(test_url)
-        self.assertEqual(result, test_payload)
-
