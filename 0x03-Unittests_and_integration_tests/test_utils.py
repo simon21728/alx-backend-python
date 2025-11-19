@@ -18,9 +18,14 @@ from client import GithubOrgClient
 Unit tests for client.GithubOrgClient.
 """
 
+import unittest
+from parameterized import parameterized
+from unittest.mock import patch, Mock
+from client import GithubOrgClient  # Make sure this points to your client module
+
 
 class TestGithubOrgClient(unittest.TestCase):
-    """Test class for GithubOrgClient."""
+    """Test the GithubOrgClient class."""
 
     @parameterized.expand([
         ("google",),
@@ -28,20 +33,19 @@ class TestGithubOrgClient(unittest.TestCase):
     ])
     @patch("client.get_json")
     def test_org(self, org_name, mock_get_json):
-        """Test that GithubOrgClient.org returns the expected value."""
-        # Arrange: configure the mock to return a test dictionary
-        mock_get_json.return_value = {"login": org_name}
-
-        # Act: create a client and call .org
+        """Test that GithubOrgClient.org returns the correct value."""
+        mock_get_json.return_value = {"key": "value"}
         client = GithubOrgClient(org_name)
-        result = client.org()
-
-        # Assert: the returned value matches the mocked JSON
-        self.assertEqual(result, {"login": org_name})
+        result = client.org
+        self.assertEqual(result, {"key": "value"})
         mock_get_json.assert_called_once_with(
             f"https://api.github.com/orgs/{org_name}"
         )
 
+#!/usr/bin/env python3
+"""
+Unit tests for client.GithubOrgClient.
+"""
 
 
 class TestAccessNestedMap(unittest.TestCase):
