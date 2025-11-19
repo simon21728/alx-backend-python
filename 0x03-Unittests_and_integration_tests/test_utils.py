@@ -36,6 +36,7 @@ class TestAccessNestedMap(unittest.TestCase):
             access_nested_map(nested_map, path)
         # Exception message must match the missing key
         self.assertEqual(str(context.exception), f"'{path[-1]}'")
+
 class TestGetJson(unittest.TestCase):
     """Test utils.get_json function."""
 
@@ -54,6 +55,7 @@ class TestGetJson(unittest.TestCase):
 
         mock_get.assert_called_once_with(test_url)
         self.assertEqual(result, test_payload)
+
 class TestMemoize(unittest.TestCase):
     """Test the memoize decorator."""
 
@@ -61,6 +63,7 @@ class TestMemoize(unittest.TestCase):
         """Test that a memoized property calls the method only once."""
         class TestClass:
             """Test class with a method and a memoized property."""
+
 
             def a_method(self):
                 return 42
