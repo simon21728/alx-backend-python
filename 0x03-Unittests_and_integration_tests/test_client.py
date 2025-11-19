@@ -7,6 +7,7 @@ import unittest
 from parameterized import parameterized
 from unittest.mock import patch, PropertyMock
 from client import GithubOrgClient  # Make sure the client module is accessible
+from utils import access_nested_map, get_json, memoize
 
 
 class TestGithubOrgClient(unittest.TestCase):
