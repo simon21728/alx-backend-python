@@ -18,7 +18,22 @@ from client import GithubOrgClient
 Unit tests for client.GithubOrgClient.
 """
 
+class TestGithubOrgClient(unittest.TestCase):
+    """Test GithubOrgClient class."""
 
+    # ... (previous test_org method here)
+
+    def test_public_repos_url(self):
+        """Test that _public_repos_url returns the correct URL from org."""
+        org_name = "google"
+        client = GithubOrgClient(org_name)
+        expected_url = "https://api.github.com/orgs/google/repos"
+        mock_payload = {"repos_url": expected_url}
+
+        # Patch the org property to return our mocked payload
+        with patch.object(GithubOrgClient, "org", return_value=mock_payload):
+            result = client._public_repos_url
+            self.assertEqual(result, expected_url)
 class TestGithubOrgClient(unittest.TestCase):
     
     @parameterized.expand([
