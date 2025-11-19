@@ -66,4 +66,5 @@ class TestGithubOrgClient(unittest.TestCase):
             mock_get_json.assert_called_once_with("http://example.com")
 
 
-
+if __name__ == "__main__":
+    unittest.main()
