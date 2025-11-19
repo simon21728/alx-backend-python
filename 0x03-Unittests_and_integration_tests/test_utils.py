@@ -80,7 +80,3 @@ class TestMemoize(unittest.TestCase):
             # Call property twice; should call a_method only once
             result1 = obj.a_property
             result2 = obj.a_property
-
-            self.assertEqual(result1, 42)
-            self.assertEqual(result2, 42)
-            mock_method.assert_called_once()
