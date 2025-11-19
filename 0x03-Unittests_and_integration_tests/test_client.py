@@ -7,6 +7,8 @@ import unittest
 from unittest.mock import patch, PropertyMock
 from parameterized import parameterized
 from client import GithubOrgClient
+from utils import get_json
+
 
 
 class TestGithubOrgClient(unittest.TestCase):
@@ -64,5 +66,4 @@ class TestGithubOrgClient(unittest.TestCase):
             mock_get_json.assert_called_once_with("http://example.com")
 
 
-if __name__ == "__main__":
-    unittest.main()
+
