@@ -18,31 +18,31 @@ from client import GithubOrgClient
 Unit tests for client.GithubOrgClient.
 """
 
-import unittest
-from parameterized import parameterized
-from unittest.mock import patch, Mock
-from client import GithubOrgClient  # Make sure this points to your client module
-
 
 class TestGithubOrgClient(unittest.TestCase):
-    """Test the GithubOrgClient class."""
-
+    
     @parameterized.expand([
         ("google",),
         ("abc",)
     ])
-    @patch("client.get_json")
+    @patch("client.get_json")  # patch get_json where it is used
     def test_org(self, org_name, mock_get_json):
         """Test that GithubOrgClient.org returns the correct value."""
-        mock_get_json.return_value = {"key": "value"}
+        
+        # Arrange: mock return value
+        expected_result = {"login": org_name}
+        mock_get_json.return_value = expected_result
+        
+        # Act
         client = GithubOrgClient(org_name)
         result = client.org
-        self.assertEqual(result, {"key": "value"})
-        mock_get_json.assert_called_once_with(
-            f"https://api.github.com/orgs/{org_name}"
-        )
+        
+        # Assert
+        mock_get_json.assert_called_once_with(f"https://api.github.com/orgs/{org_name}")
+        self.assertEqual(result, expected_result)
 
-#!/usr/bin/env python3
+if __name__ == "__main__":
+    unittest.main()
 """
 Unit tests for client.GithubOrgClient.
 """
