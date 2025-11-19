@@ -18,6 +18,26 @@ from client import GithubOrgClient
 Unit tests for client.GithubOrgClient.
 """
 
+class TestIntegrationGithubOrgClient(unittest.TestCase):
+    """Integration tests for GithubOrgClient."""
+
+    def setUp(self):
+        """Start patching requests.get for each test instance."""
+        self.get_patcher = patch("client.requests.get")
+        self.mock_get = self.get_patcher.start()
+
+        def get_json_side_effect(url, *args, **kwargs):
+            if url.endswith("/repos"):
+                return self.repos_payload
+            return self.org_payload
+
+        self.mock_get.return_value.json.side_effect = get_json_side_effect
+
+    def tearDown(self):
+        """Stop patching requests.get after each test."""
+        self.get_patcher.stop()
+
+
 class TestGithubOrgClient(unittest.TestCase):
     """Test GithubOrgClient class."""
 
