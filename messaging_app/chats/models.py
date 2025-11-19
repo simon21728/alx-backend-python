@@ -7,15 +7,16 @@ from django.contrib.auth.models import AbstractUser
 #       USER MODEL
 # =========================
 class User(AbstractUser):
-    pass
-
     """
-    Extends Django's AbstractUser but replaces username with email
-    and includes additional fields from the project requirements.
+    Custom User model matching the required schema.
     """
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    user_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    
+    # Explicitly define first_name and last_name
+    first_name = models.CharField(max_length=150, null=False)
+    last_name = models.CharField(max_length=150, null=False)
 
-    # Remove username and rely on email
+    # Remove username field
     username = None
     email = models.EmailField(unique=True, null=False)
 
@@ -30,9 +31,8 @@ class User(AbstractUser):
 
     created_at = models.DateTimeField(auto_now_add=True)
 
-    # Tell Django to use email as the unique identifier
     USERNAME_FIELD = "email"
-    REQUIRED_FIELDS = []  # since email & password are required by default
+    REQUIRED_FIELDS = []
 
     def __str__(self):
         return self.email
@@ -42,39 +42,30 @@ class User(AbstractUser):
 #     CONVERSATION MODEL
 # =========================
 class Conversation(models.Model):
-    """
-    A conversation can have multiple participants.
-    """
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-
+    conversation_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     participants = models.ManyToManyField(User, related_name="conversations")
-
     created_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
-        return f"Conversation {self.id}"
+        return f"Conversation {self.conversation_id}"
 
 
 # =========================
 #         MESSAGE MODEL
 # =========================
 class Message(models.Model):
-    """
-    Messages belong to a conversation and have a sender (User).
-    """
-    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
-
+    message_id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     conversation = models.ForeignKey(
         Conversation, 
         on_delete=models.CASCADE, 
         related_name="messages"
     )
-
-
-    sender = models.ForeignKey('chats.User', on_delete=models.CASCADE)
-
+    sender = models.ForeignKey(
+        User, 
+        on_delete=models.CASCADE, 
+        related_name="messages_sent"
+    )
     message_body = models.TextField(null=False)
-
     sent_at = models.DateTimeField(auto_now_add=True)
 
     def __str__(self):
