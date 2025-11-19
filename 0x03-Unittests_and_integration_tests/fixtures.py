@@ -11,7 +11,7 @@ org_payload = {
 
 repos_payload = [
     {"name": "repo1", "license": {"key": "apache-2"}},
-    {"name": "repo2", "license": {"key": "mit"}},
+    {"name": "repo2", "license": {"key": "mit"}}
 ]
 
 expected_repos = ["repo1", "repo2"]
